@@ -280,7 +280,7 @@ def plot_omm_pareto_frontier():
     ax1.set_xticklabels(regimes)
     ax1.set_ylim(0, 108)
     ax1.grid(axis="y", linestyle=":", alpha=0.6)
-    ax1.set_title(r"\textbf{(a)} Diagnostic Accuracy & Failure Mode", fontsize=9, fontweight="bold", pad=8)
+    ax1.set_title("(a) Diagnostic Accuracy & Failure Mode", fontsize=9, fontweight="bold", pad=8)
 
     for bar, val in zip(bars1, acc_vals):
         y_pos = val + 3.0 if val > 0 else 2.5
@@ -329,7 +329,7 @@ def plot_omm_pareto_frontier():
     ax2.set_ylim(0, 360)
     ax2_twin.set_ylim(0, 24)
     ax2.grid(axis="y", linestyle=":", alpha=0.6)
-    ax2.set_title(r"\textbf{(b)} Diagnostic Latency vs. Probe Overhead", fontsize=9, fontweight="bold", pad=8)
+    ax2.set_title("(b) Diagnostic Latency vs. Probe Overhead", fontsize=9, fontweight="bold", pad=8)
 
     lines = line1 + line2 + [line3]
     labels = [l.get_label() for l in lines]
