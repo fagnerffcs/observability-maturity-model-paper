@@ -77,8 +77,8 @@ def evaluate_cn_omm_profiles() -> pd.DataFrame:
             "d5_1": 3.0, "d5_2": 3.0, "d5_3": 3.0,
         },
         {
-            "regime_id": "L4_PANOPTES_Correlated",
-            "regime_name": "Treatment: PANOPTES (Multimodal + T_self)",
+            "regime_id": "L4_Correlated",
+            "regime_name": "Treatment: L4 Correlated (Multimodal + T_self)",
             "d1_1": 4.5, "d1_2": 4.5, "d1_3": 4.0,
             "d2_1": 4.5, "d2_2": 4.0, "d2_3": 4.5,
             "d3_1": 4.5, "d3_2": 4.0, "d3_3": 4.5,
@@ -172,7 +172,7 @@ def analyze_empirical_chaos_trials():
     print("======================================================================")
     print(f"Level 2 (Native CLI)     : Median MTTDiag = {np.median(mttd_l2):.2f}s | Acc = {np.mean(acc_l2)*100:.2f}% ({np.sum(acc_l2)}/30)")
     print(f"Level 3 (Siloed Tracing) : Median MTTDiag = {np.median(mttd_l3):.2f}s | Acc = {np.mean(acc_l3)*100:.2f}% ({np.sum(acc_l3)}/30)")
-    print(f"Level 4 (PANOPTES)       : Median MTTDiag = {np.median(mttd_l4):.2f}s | Acc = {np.mean(acc_l4)*100:.2f}% ({np.sum(acc_l4)}/30)")
+    print(f"Level 4 (Correlated)     : Median MTTDiag = {np.median(mttd_l4):.2f}s | Acc = {np.mean(acc_l4)*100:.2f}% ({np.sum(acc_l4)}/30)")
     print(f"Wilcoxon L4 vs L2        : p = {wilcoxon_p:.2e} | Vargha-Delaney A12 = {a12:.3f}")
     print(f"Fisher's Exact L4 vs L2  : p = {fisher_p:.2e} | Odds Ratio = {odds_ratio:.1f}")
     print(f"Level 4 CPU Overhead     : Mean = {cpu_share.mean():.2f}% +/- {cpu_share.std():.2f}% (One-sample <15% p = {t_p_one:.2e})")
@@ -206,7 +206,7 @@ def plot_omm_radar_profiles(df_profiles: pd.DataFrame):
     styles = {
         "L2_Native_CLI": ("#d95f02", "--", "o", "Baseline A: Native CLI ($\mathrm{Level}_{\mathrm{eff}}=2$)"),
         "L3_Siloed_Tracing": ("#e7298a", "-.", "s", "Baseline B: Siloed Tracing ($\mathrm{Level}_{\mathrm{eff}}=2^*$, Bottleneck $D_2$)"),
-        "L4_PANOPTES_Correlated": ("#1b9e77", "-", "^", "Treatment: PANOPTES ($\mathrm{Level}_{\mathrm{eff}}=4$)"),
+        "L4_Correlated": ("#1b9e77", "-", "^", "Treatment: L4 Correlated ($\mathrm{Level}_{\mathrm{eff}}=4$)"),
         "L5_Autonomous_Target": ("#7570b3", ":", "d", "Reference Target: Autonomous ($\mathrm{Level}_{\mathrm{eff}}=5$)"),
     }
 
@@ -218,7 +218,7 @@ def plot_omm_radar_profiles(df_profiles: pd.DataFrame):
         values = [row["C_D1"], row["C_D2"], row["C_D3"], row["C_D4"], row["C_D5"]]
         values += values[:1]
         ax.plot(angles, values, color=color, linestyle=ls, linewidth=1.8, marker=marker, markersize=5, label=label)
-        if rid == "L4_PANOPTES_Correlated":
+        if rid == "L4_Correlated":
             ax.fill(angles, values, color=color, alpha=0.14)
         elif rid == "L3_Siloed_Tracing":
             ax.fill(angles, values, color=color, alpha=0.07)
@@ -263,7 +263,7 @@ def plot_omm_pareto_frontier():
         "legend.fontsize": 8,
     })
 
-    regimes = ["Level 2\n(Native CLI)", "Level 3 Attempt\n(Siloed Tracing)", "Level 4\n(PANOPTES)"]
+    regimes = ["Level 2\n(Native CLI)", "Level 3 Attempt\n(Siloed Tracing)", "Level 4\n(L4 Correlated)"]
     x = np.arange(len(regimes))
 
     acc_vals = [20.0, 0.0, 83.33]

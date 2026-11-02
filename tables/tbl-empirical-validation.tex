@@ -14,7 +14,7 @@
 \midrule
 \textbf{Baseline B: Siloed Tracing} \newline (Jaeger Inclusive) & $(3.3, \mathbf{2.3}, 3.0, 3.0, 3.0)$ & $2.92$ & \textbf{Level 2*} \newline \textit{(Gargalo $D_2$)} & $0.478$ & $39.15\,\text{s}$ \newline $[36.2, 42.1]$ & $0.00\%$ \newline $(0/30)$ & $5.40 \pm 1.18\%$ & \textbf{Monomodal Additivity Fallacy:} Fast anomaly detection, but $100\%$ upstream misattribution due to \textit{Cascading Span Bias} ($D_2 < 4$). \\
 \midrule
-\textbf{Treatment: PANOPTES} \newline (Multimodal + $T_{\text{self}}$) & $(4.3, 4.3, 4.3, 4.3, 4.3)$ & $4.30$ & \textbf{Level 4} & $0.833$ & $\mathbf{17.27\,\text{s}}$ \newline $[14.6, 20.5]$ & $\mathbf{83.33\%}$ \newline $(25/30)$ & $\mathbf{9.51 \pm 2.14\%}$ & \textbf{Configurational Synergy:} Satisfying $D_2 \ge 4$ ($T_{\text{self}}$ + Exemplars + W3C Logs) eliminates cascading bias while keeping $\Delta_{\text{CPU}} < 15\%$. \\
+\textbf{Treatment: L4 Correlated} \newline (Multimodal + $T_{\text{self}}$) & $(4.3, 4.3, 4.3, 4.3, 4.3)$ & $4.30$ & \textbf{Level 4} & $0.833$ & $\mathbf{17.27\,\text{s}}$ \newline $[14.6, 20.5]$ & $\mathbf{83.33\%}$ \newline $(25/30)$ & $\mathbf{9.51 \pm 2.14\%}$ & \textbf{Configurational Synergy:} Satisfying $D_2 \ge 4$ ($T_{\text{self}}$ + Exemplars + W3C Logs) eliminates cascading bias while keeping $\Delta_{\text{CPU}} < 15\%$. \\
 \midrule
 \multicolumn{5}{l}{\textbf{Hypothesis Test (Level 4 vs.\ Level 2/3 Baselines):}} & $p = 3.06 \times 10^{-5}$ \newline ($\hat{A}_{12} = 0.817$) & $p = 7.74 \times 10^{-7}$ \newline (McNemar $7.8\text{e-}5$) & $p = 6.52 \times 10^{-9}$ \newline (One-sample $<15\%$) & \textbf{Statistically confirms non-linear diagnostic jump at Level 4 and validates non-compensatory Stage-Gate rule.} \\
 \bottomrule

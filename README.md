@@ -22,7 +22,7 @@ O pacote consolida:
 | **Level 1: Opaque** *(Blind Execution)* | Logs efêmeros em `stdout` local sem persistência ou contexto. | $\mathcal{O}(t) \approx \emptyset, \; \text{rank}(\mathcal{O}) = 0$ | Detecção exclusivamente pós-morte via reclamação de usuários externos. |
 | **Level 2: Reactive** *(Disjoint Polling)* | Coleta de infraestrutura (`kubelet`/cAdvisor) e triagem manual via CLI (`kubectl top/logs`). | $\text{Level}_{\text{eff}} = 2, \; \mathcal{I}(\mathcal{S}) = 0.266$ | **$MTTDiag$ Mediano:** $300.00\,\text{s}$ \| **Acurácia ($Acc$):** $20.00\%$ ($6/30$). Cego a degradações de rede e CPU throttling. |
 | **Level 3: Fragmented** *(Siloed Pillars)* | Coleta centralizada de $M, L, T$ em silos isolados sem decomposição de tempo próprio ($T_{\text{self}}$). | $\bar{C} = 2.93$, mas **Gargalo Stage-Gate em $D_2 = 2.33 \Rightarrow \text{Level}_{\text{eff}} = 2^*$** | **Falácia da Aditividade Monomodal:** Detecção rápida ($18.66\,\text{s}$), mas **Acurácia ($Acc$) = $0.00\%$ ($0/30$)** devido ao *Cascading Span Bias*. |
-| **Level 4: Correlated** *(Multimodal Fusion — PANOPTES)* | OTel + eBPF zero-code, W3C TraceContext em logs, Exemplars, $T_{\text{self}}$, Chaos Probes e armazenamento *index-free*. | $\text{Level}_{\text{eff}} = 4, \; \mathcal{I}(\mathcal{S}) = 0.833$ | **$MTTDiag$ Mediano:** **$17.27\,\text{s}$** ($-94.24\%, p = 3.06 \times 10^{-5}$) \| **Acurácia ($Acc$):** **$83.33\%$** ($25/30, p = 7.74 \times 10^{-7}$) \| **$\Delta_{\text{CPU}}$:** **$9.51\% \pm 2.14\%$** ($< 15\%$). |
+| **Level 4: Correlated** *(Multimodal Fusion — Target State)* | OTel + eBPF zero-code, W3C TraceContext em logs, Exemplars, $T_{\text{self}}$, Chaos Probes e armazenamento *index-free*. | $\text{Level}_{\text{eff}} = 4, \; \mathcal{I}(\mathcal{S}) = 0.833$ | **$MTTDiag$ Mediano:** **$17.27\,\text{s}$** ($-94.24\%, p = 3.06 \times 10^{-5}$) \| **Acurácia ($Acc$):** **$83.33\%$** ($25/30, p = 7.74 \times 10^{-7}$) \| **$\Delta_{\text{CPU}}$:** **$9.51\% \pm 2.14\%$** ($< 15\%$). |
 | **Level 5: Autonomous** *(Adaptive AIOps)* | Ponderação adaptativa FinOps/GreenOps ($w_i = \alpha_i S_i$), inferência causal GNN/LLM e *self-healing* autônomo. | $\text{Level}_{\text{eff}} = 5, \; \mathcal{I}(\mathcal{S}) = 1.000$ | Remediação em malha fechada governada por *Error Budgets* e verificação contínua de caos. |
 
 ---
@@ -31,13 +31,7 @@ O pacote consolida:
 
 ```text
 ├── data/
-│   ├── cn_omm_cluster_assessments.csv             # Matriz auditada dos 15 subcomponentes (d1.1..d5.3), C(Dk), Stage-Gate e Índice Euclidiano
-│   ├── scenario1_workload_baseline.csv            # Série temporal de baseline sem instrumentação (N=30 janelas)
-│   ├── scenario2_overhead_panoptes.csv            # Série temporal do Probe Effect (CPU/RAM) no Nível 4 (PANOPTES)
-│   ├── scenario3_diagnostic_trials.csv            # Campanhas pareadas N=30 — Baseline A: Nível 2 (Native CLI)
-│   ├── scenario3_diagnostic_trials_stratified.csv # Campanhas pareadas estratificadas por modalidade de falha (Nível 2)
-│   ├── scenario4_diagnostic_trials.csv            # Campanhas pareadas N=30 — Baseline B: Tentativa Nível 3 (Siloed Tracing)
-│   └── scenario4b_optimized_trials.csv            # Campanhas pareadas N=30 — Tratamento: Nível 4 (PANOPTES Multimodal + T_self)
+│   └── cn_omm_cluster_assessments.csv             # Matriz auditada dos 15 subcomponentes (d1.1..d5.3), C(Dk), Stage-Gate e Índice Euclidiano
 ├── figures/
 │   ├── fig-cn-omm-architecture.tex                # Diagrama arquitetural e metodológico DSR em TikZ nativo
 │   ├── fig_omm_radar_profiles.png                 # Gráfico radar pentadimensional dos perfis avaliados (destacando o gargalo D2)

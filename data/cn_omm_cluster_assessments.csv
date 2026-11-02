@@ -2,5 +2,5 @@ regime_id,regime_name,d1_1,d1_2,d1_3,d2_1,d2_2,d2_3,d3_1,d3_2,d3_3,d4_1,d4_2,d4_
 L1_Opaque,Reference L1: Opaque (Stdout Only),1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1,D1,0.0
 L2_Native_CLI,Baseline A: Native CLI (kubectl top/logs),2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,2.0,3.0,2.0,2.0,2.0,2.0,2.0,2.0,2.33,2.07,2,D1,0.266
 L3_Siloed_Tracing,Baseline B: Siloed Tracing (Inclusive Latency),3.5,3.5,3.0,3.0,2.0,2.0,3.5,2.5,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.33,2.33,3.0,3.0,3.0,2.93,2,D2,0.477
-L4_PANOPTES_Correlated,Treatment: PANOPTES (Multimodal + T_self),4.5,4.5,4.0,4.5,4.0,4.5,4.5,4.0,4.5,4.5,4.5,4.0,4.5,4.0,4.5,4.33,4.33,4.33,4.33,4.33,4.33,4,D1,0.833
+L4_Correlated,Treatment: L4 Correlated (Multimodal + T_self),4.5,4.5,4.0,4.5,4.0,4.5,4.5,4.0,4.5,4.5,4.5,4.0,4.5,4.0,4.5,4.33,4.33,4.33,4.33,4.33,4.33,4,D1,0.833
 L5_Autonomous_Target,Reference L5: Autonomous AIOps Loop,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5,D1,1.0
