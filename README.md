@@ -40,13 +40,10 @@ O pacote consolida:
 │   └── scenario4b_optimized_trials.csv            # Campanhas pareadas N=30 — Tratamento: Nível 4 (PANOPTES Multimodal + T_self)
 ├── figures/
 │   ├── fig-cn-omm-architecture.tex                # Diagrama arquitetural e metodológico DSR em TikZ nativo
-│   ├── fig_omm_radar_profiles.pdf                 # Gráfico radar pentadimensional dos perfis avaliados (destacando o gargalo D2)
-│   └── fig_omm_pareto_frontier.pdf                # Trajetória empírica de Acurácia, MTTDiag e Probe Effect (CPU %)
+│   ├── fig_omm_radar_profiles.png                 # Gráfico radar pentadimensional dos perfis avaliados (destacando o gargalo D2)
+│   └── fig_omm_pareto_frontier.png                # Trajetória empírica de Acurácia, MTTDiag e Probe Effect (CPU %)
 ├── scripts/
-│   ├── evaluate_cn_omm.py                         # Motor de avaliação automatizada CN-OMM, testes estatísticos e geração dos PDFs
-│   ├── deploy-astronomy-shop.sh                   # Provisionamento reprodutível do benchmark CNCF Astronomy Shop
-│   ├── deploy-chaos-mesh.sh                       # Provisionamento do motor de injeção de falhas Chaos Mesh
-│   └── deploy-observability-lgtm.sh               # Provisionamento da stack OpenTelemetry + Grafana LGTM (Nível 4)
+│   └── evaluate_cn_omm.py                         # Motor de avaliação automatizada CN-OMM, testes estatísticos e geração das figuras
 ├── sections/
 │   ├── 01.introduction.tex                        # Contextualização, lacunas (Vendor Bias, Probe Effect, Cascading Bias) e RQs
 │   ├── 02.background_foundations.tex              # Observabilidade de Kalman, DSR (Becker/De Bruin) e Teoria Configuracional

@@ -8,9 +8,9 @@ Computes:
    and Normalized Euclidean Maturity Progression Indices I(S).
 3. Non-parametric & Exact Statistical Hypothesis Tests (Wilcoxon, Vargha-Delaney A12,
    Fisher's Exact, McNemar's test, One-sample t-test on CPU overhead < 15%).
-4. Publication-grade PDF figures (without internal chart titles, per ACM formatting):
-   - figures/fig_omm_radar_profiles.pdf
-   - figures/fig_omm_pareto_frontier.pdf
+4. Publication-grade PNG figures (without internal chart titles, per ACM formatting):
+   - figures/fig_omm_radar_profiles.png
+   - figures/fig_omm_pareto_frontier.png
 """
 
 import math
@@ -180,7 +180,7 @@ def analyze_empirical_chaos_trials():
 
 
 def plot_omm_radar_profiles(df_profiles: pd.DataFrame):
-    """Generates figures/fig_omm_radar_profiles.pdf (no internal title)."""
+    """Generates figures/fig_omm_radar_profiles.png (no internal title)."""
     plt.rcParams.update({
         "font.family": "serif",
         "font.size": 9,
@@ -246,14 +246,14 @@ def plot_omm_radar_profiles(df_profiles: pd.DataFrame):
 
     ax.legend(loc="upper center", bbox_to_anchor=(0.5, -0.13), ncol=1, frameon=True, framealpha=0.95)
     plt.tight_layout()
-    out_path = FIG_DIR / "fig_omm_radar_profiles.pdf"
-    fig.savefig(out_path, bbox_inches="tight")
+    out_path = FIG_DIR / "fig_omm_radar_profiles.png"
+    fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved {out_path}")
 
 
 def plot_omm_pareto_frontier():
-    """Generates figures/fig_omm_pareto_frontier.pdf (no internal title)."""
+    """Generates figures/fig_omm_pareto_frontier.png (no internal title)."""
     plt.rcParams.update({
         "font.family": "serif",
         "font.size": 9,
@@ -327,8 +327,8 @@ def plot_omm_pareto_frontier():
     ax2.legend(lines, labels, loc="upper right", frameon=True, fontsize=7.2)
 
     plt.tight_layout()
-    out_path = FIG_DIR / "fig_omm_pareto_frontier.pdf"
-    fig.savefig(out_path, bbox_inches="tight")
+    out_path = FIG_DIR / "fig_omm_pareto_frontier.png"
+    fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
     print(f"Saved {out_path}")
 
@@ -338,6 +338,7 @@ if __name__ == "__main__":
     print("\nCN-OMM Automated Assessment Table:")
     print(df_prof[["regime_id", "C_D1", "C_D2", "C_D3", "C_D4", "C_D5", "arithmetic_mean", "effective_stage_gate_level", "bottleneck_dimension", "euclidean_progression_index"]].to_string(index=False))
     print()
-    analyze_empirical_chaos_trials()
+    if (DATA_DIR / "scenario3_diagnostic_trials.csv").exists():
+        analyze_empirical_chaos_trials()
     plot_omm_radar_profiles(df_prof)
     plot_omm_pareto_frontier()
