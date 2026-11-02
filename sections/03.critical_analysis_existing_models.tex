@@ -1,0 +1,28 @@
+\section{Critical Analysis of Existing Observability Maturity Models}
+\label{sec:critical_analysis}
+
+Requirement \textbf{R1} of Becker et al.\ \cite{becker_2009} mandates that any newly proposed maturity artifact must first be systematically substantiated through a critical comparison with existing models, demonstrating concrete shortcomings in prior work. To fulfill Requirement R1, we audited seven prominent maturity and capability frameworks spanning both academic literature and industrial grey literature. Table~\ref{tab:existing_models_comparison} synthesizes this evaluation across nine methodological and architectural criteria.
+
+\input{tables/tbl-existing-models-comparison}
+
+\subsection{Industrial and Grey Literature Frameworks}
+\label{subsec:industrial_models}
+
+As shown in Table~\ref{tab:existing_models_comparison}, practitioner adoption of observability maturity is currently dominated by vendor-authored whitepapers and consultancy rubrics, notably the \textbf{Grafana Labs 4-Stage Model} \cite{grafana_omm_2024}, the \textbf{Dynatrace 5-Level Enterprise Maturity Model} \cite{dynatrace_omm_2024}, the \textbf{World Wide Technology (WWT) Model} \cite{wwt_omm_2025}, and the descriptive taxonomy of the \textbf{CNCF TAG-Observability Whitepaper} \cite{cncf_obs_2024}. While these frameworks offer accessible vocabulary for executive alignment, they exhibit three severe limitations when evaluated as scientific engineering instruments:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Absence of DSR Rigor and Formal Stage-Gates:} None of the industrial models follow formal maturity design methodologies \cite{becker_2009, debruin_2005}. Their levels are defined as qualitative marketing narratives rather than mutually exclusive, collectively exhaustive architectural states.
+    \item \textbf{Conflation of Signal Collection with Causal Diagnosis:} Frameworks such as Grafana Labs \cite{grafana_omm_2024} and WWT \cite{wwt_omm_2025} classify an organization as ``mature'' once metrics, logs, and traces are aggregated into centralized dashboards. They fail to distinguish between \textit{siloed pillar aggregation} (where engineers manually pivot across time windows) and \textit{deterministic causal correlation} (where W3C TraceContext, Prometheus Exemplars, and span self-time decomposition $T_{\text{self}}$ isolate root causes automatically).
+    \item \textbf{Omission of Probe Effect Governance:} Vendor models treat telemetry ingestion as unbounded, omitting quantitative upper bounds on collector CPU/RAM consumption ($\Omega$) or high-cardinality storage amplification.
+\end{itemize}
+
+\subsection{Academic Literature in Cloud, Big Data, and AIOps}
+\label{subsec:academic_models}
+
+In the academic literature, peer-reviewed maturity models specifically targeting cloud-native microservice observability remain remarkably scarce:
+\begin{enumerate}[leftmargin=*, nosep]
+    \item \textbf{Duarte and Mira da Silva \cite{duarte_2013}} proposed the \textit{Cloud Maturity Model} following Peffers et al.'s DSRM \cite{peffers_2007} and CMMI-SVC continuous representations. However, their model addresses high-level IT Service Management (ITSM) processes (e.g., SLA negotiation and capacity contracting) rather than distributed telemetry pipelines, kernel instrumentation, or microservice fault localization.
+    \item \textbf{Patel \cite{patel_2025}} recently introduced a 3-stage conceptual model (\textit{Basic, Advanced, Predictive}) for observability in Big Data pipelines. Despite sharing terminology with our domain, a critical inspection reveals that Patel's model is limited to batch/streaming data quality checks (schema drift and pipeline latency), lacks any reference to DSR methodologies (\cite{becker_2009, debruin_2005, wendler_2012}), provides no mathematical definitions or assessment instruments, and conducts zero empirical validation.
+    \item \textbf{Amgothu, Vedantham, and Muthe Gowda \cite{amgothu_2025}} proposed the \textit{Adaptive Observability--AIOps Integration Model (AOIM)}, introducing a mathematical formulation for dynamic telemetry signal weighting ($w_i = \alpha_i \times S_i$) based on anomaly frequency and service criticality. While AOIM provides valuable insights into Level 5 adaptive weighting, the authors do not define a formal multi-stage maturity model; tellingly, when referencing observability maturity stages, Amgothu et al.\ cite the commercial WWT whitepaper \cite{wwt_omm_2025}, underscoring the absence of a foundational academic model in the literature.
+\end{enumerate}
+
+This systematic audit confirms a clear scientific gap: there is currently no peer-reviewed Cloud-Native Observability Maturity Model that integrates mathematical state-space formalization, configurational stage-gate rules, automated cluster-level capability auditing \cite{proenca_2016_rcis}, and Type-3 empirical validation under controlled fault injection \cite{helgesson_2012}.

@@ -1,0 +1,22 @@
+\begin{table*}[t]
+\centering
+\caption{Methodological Alignment of the CN-OMM with Becker et al.'s Eight DSR Requirements (R1--R8) and Helgesson et al.'s Evaluation Taxonomy}
+\label{tab:becker_evaluation}
+\footnotesize
+\setlength{\tabcolsep}{4.5pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\textwidth}{l l >{\raggedright\arraybackslash}X l}
+\toprule
+\textbf{Code} & \textbf{DSR Requirement \cite{becker_2009}} & \textbf{Instantiation and Methodological Implementation in the CN-OMM Artifact} & \textbf{Section / Evidence} \\
+\midrule
+\textbf{R1} & Comparison with existing models & Systematic audit of 7 existing academic and industrial frameworks (\cite{duarte_2013, patel_2025, amgothu_2025, grafana_omm_2024, dynatrace_omm_2024, cncf_obs_2024, wwt_omm_2025}), proving the need for formal cross-pillar and probe-effect dimensions. & Section~\ref{sec:critical_analysis}, Table~\ref{tab:existing_models_comparison} \\
+\textbf{R2} & Iterative procedure & Three-iteration design cycle: (i) Rapid Review taxonomy synthesis; (ii) mathematical state-space \& configurational refinement; (iii) empirical chaos calibration. & Sections~\ref{sec:background}--\ref{sec:empirical_validation} \\
+\textbf{R3} & Evaluation & Dual evaluation following Helgesson et al.\ \cite{helgesson_2012}: Type-1 structural/theoretical grounding and Type-3 controlled Kubernetes chaos experiments ($N=30$ \& $N=60$). & Section~\ref{sec:empirical_validation}, Table~\ref{tab:empirical_validation} \\
+\textbf{R4} & Multi-methodological procedure & Combines Literature Synthesis, Control-Theoretic State Formalization, Declarative Automated Auditing (Proen\c{c}a \cite{proenca_2016_rcis}), and Factorial Chaos Experimentation. & Sections~\ref{sec:cn_omm}--\ref{sec:empirical_validation} \\
+\textbf{R5} & Identification of problem relevance & Addresses the diagnostic collapse of monomodal tracing and uncontrolled telemetry FinOps/CPU overhead in production Kubernetes microservices. & Section~\ref{sec:introduction} \\
+\textbf{R6} & Problem definition & Defines the domain scope (cloud-native Kubernetes clusters), target users (SREs, platform architects), and non-compensatory stage-gate constraints. & Sections~\ref{sec:introduction}, \ref{sec:cn_omm} \\
+\textbf{R7} & Targeted presentation of results & Provides both a $5\times5$ architectural matrix for practitioners and a declarative Python/PromQL automated assessment engine (\texttt{evaluate\_cn\_omm.py}). & Tables~\ref{tab:cn_omm_dimensions}--\ref{tab:cn_omm_matrix}, Section~\ref{sec:assessment} \\
+\textbf{R8} & Scientific documentation & Full Open Science replication package including formal equations, cluster audit datasets, raw chaos trial logs, and statistical reproduction scripts. & Section~\ref{sec:conclusion} \\
+\bottomrule
+\end{tabularx}
+\end{table*}

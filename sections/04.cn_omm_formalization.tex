@@ -1,0 +1,77 @@
+\section{The Cloud-Native Observability Maturity Model (CN-OMM)}
+\label{sec:cn_omm}
+
+To overcome the theoretical and architectural deficiencies identified in Section~\ref{sec:critical_analysis}, we formulate the \textbf{Cloud-Native Observability Maturity Model (CN-OMM)}. Following De Bruin et al.'s top-down hierarchical architecture (\textit{Domain $\rightarrow$ Orthogonal Dimensions $\rightarrow$ Sub-Components}) \cite{debruin_2005} and Lasrado et al.'s structural canon \cite{lasrado_2015}, this section presents: (i) the mathematical formalization of cloud-native observability and its dialectical constraints, (ii) the five orthogonal capability dimensions ($D_1$--$D_5$) and their 15 sub-components, and (iii) the five evolutionary maturity stages and their configurational transition rules. Figure~\ref{fig:cn_omm_architecture} illustrates the complete methodological and structural architecture of the CN-OMM.
+
+\input{figures/fig-cn-omm-architecture}
+
+\subsection{Mathematical Formalization of Distributed State Observability}
+\label{subsec:math_formalization}
+
+Let a cloud-native microservice system orchestrated on Kubernetes be modeled over discrete observation windows $t \in \mathbb{T}$ as a dynamic directed call graph $\mathcal{G}(t) = (\mathcal{V}(t), \mathcal{E}(t))$, where $\mathcal{V}(t) = \{v_1, v_2, \dots, v_K\}$ denotes the set of active service workloads (Pods/containers) and $\mathcal{E}(t) \subseteq \mathcal{V}(t) \times \mathcal{V}(t)$ denotes synchronous or asynchronous invocation edges. Each workload $v_k \in \mathcal{V}(t)$ possesses a latent internal operational state $\mathbf{x}_k(t) \in \mathcal{X}_k$ (capturing CPU cgroup throttling, memory heap pressure, socket queue saturation, and application exception states), forming the global system state $\mathbf{x}(t) = [\mathbf{x}_1(t), \dots, \mathbf{x}_K(t)]^\top$.
+
+The external telemetry emitted by the system during window $t$ is defined as the multimodal five-tuple:
+\begin{equation}
+    \mathcal{O}(t) = \langle M(t), L(t), T(t), E(t), P(t) \rangle
+    \label{eq:telemetry_tuple}
+\end{equation}
+where $M(t)$ represents aggregated numerical time-series metrics, $L(t)$ represents discrete structured or unstructured log records, $T(t)$ represents distributed execution traces composed of causal spans $s_i = (\text{trace\_id}, \text{span\_id}, \text{parent\_id}, v_k, t_{\text{start}}, t_{\text{end}})$, $E(t)$ represents Kubernetes control-plane and scheduler state transitions, and $P(t)$ represents continuous kernel/runtime execution profiles (e.g., eBPF stack samples).
+
+\subsubsection{The Dialectical Trade-Off: Diagnostic Information vs.\ Probe Effect}
+Given a fault injection or production incident where root cause $v^* \in \mathcal{V}(t)$ experiences an anomalous state transition, a diagnostic operator $\Phi: \mathcal{O}(t) \rightarrow \mathcal{V}(t) \cup \{\varnothing\}$ attempts to infer $\hat{v} = \Phi(\mathcal{O}(t))$ within diagnostic latency $MTTDiag$. In information-theoretic terms, the diagnostic utility of an observability architecture is proportional to the mutual information $I(\mathbf{x}(t); \mathcal{O}(t)) = H(\mathbf{x}(t)) - H(\mathbf{x}(t) \mid \mathcal{O}(t))$, which measures the reduction in diagnostic uncertainty $H(\mathbf{x} \mid \mathcal{O})$.
+
+However, acquiring and transporting $\mathcal{O}(t)$ incurs a physical \textbf{Probe Effect Vector} $\Omega(\mathcal{O}(t))$:
+\begin{equation}
+    \Omega(\mathcal{O}(t)) = \left\langle \Delta_{\text{CPU}}(\mathcal{O}), \; \Delta_{\text{RAM}}(\mathcal{O}), \; \Delta_{\text{Net}}(\mathcal{O}), \; \Delta_{\text{Storage}}(\mathcal{O}) \right\rangle
+    \label{eq:probe_effect}
+\end{equation}
+where $\Delta_{\text{CPU}}(\mathcal{O}) = (\text{CPU}_{\text{inst}} - \text{CPU}_{\text{base}}) / \text{CPU}_{\text{alloc}}$ denotes the marginal fractional CPU overhead imposed by SDKs, eBPF probes, and OpenTelemetry collectors. Maturity progression is therefore governed by a constrained optimization problem: maximizing diagnostic reconstructibility $I(\mathbf{x}(t); \mathcal{O}(t))$ while strictly satisfying the stability envelope $\Omega(\mathcal{O}(t)) \preceq \boldsymbol{\theta}_{\max}$ (e.g., $\Delta_{\text{CPU}} < \theta_{\text{CPU}} = 15\%$).
+
+\subsubsection{Formalizing Cascading Span Bias and Exclusive Self-Time ($T_{\text{self}}$)}
+A critical theoretical insight of the CN-OMM is explaining why monomodal distributed tracing fails under synchronous call chains. For any span $s_i \in T(t)$ executing on service $v_k$ with synchronous child spans $\text{children}(s_i) = \{s_j \in T(t) \mid \text{parent\_id}(s_j) = \text{span\_id}(s_i)\}$, its inclusive duration is:
+\begin{equation}
+    D(s_i) = t_{\text{end}}(s_i) - t_{\text{start}}(s_i) = T_{\text{self}}(s_i) + \sum_{s_j \in \text{children}(s_i)} D(s_j)
+    \label{eq:inclusive_duration}
+\end{equation}
+Whenever a leaf or intermediate service $v^*$ suffers resource throttling or network latency ($\Delta \tau > 0$), every upstream ancestor $s_{\text{anc}}$ along the path from the ingress gateway ($v_{\text{root}}$) to $v^*$ exhibits an inflated inclusive duration $D(s_{\text{anc}}) \ge D(s^*) + \Delta \tau$. Consequently, any monomodal diagnostic operator $\Phi_{\text{trace}}$ that ranks suspects by inclusive tail latency ($P_{95}/P_{99}$ of $D(s_i)$) systematically misattributes the fault to upstream callers ($\hat{v} \neq v^*$), yielding \textbf{Cascading Span Bias}. Eliminating this bias requires decomposing inclusive duration into \textbf{exclusive span self-time}:
+\begin{equation}
+    T_{\text{self}}(s_i) = \max\left(0, \; D(s_i) - \sum_{s_j \in \text{children}(s_i)} \mathcal{U}(s_j)\right)
+    \label{eq:exclusive_selftime}
+\end{equation}
+where $\bigcup_{s_j} \mathcal{U}(s_j)$ denotes the union of non-overlapping child execution intervals, coupled via shared W3C \texttt{trace\_id} keys to co-occurring log errors $L(t)$ and container resource metrics $M(t)$.
+
+\subsection{The Five Orthogonal Dimensions and Fifteen Sub-Components}
+\label{subsec:dimensions}
+
+Consistent with Miller's cognitive capacity principle ($7 \pm 2$ categories) emphasized by Lasrado et al.\ \cite{lasrado_2015} and De Bruin et al.'s component layering \cite{debruin_2005}, the CN-OMM structures cloud-native observability across \textbf{five orthogonal dimensions ($D_1$--$D_5$)}, each decomposed into three measurable sub-components ($d_{k.1}, d_{k.2}, d_{k.3}$), totaling 15 architectural capabilities (summarized in Table~\ref{tab:cn_omm_dimensions}):
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{$D_1$ -- Telemetry Acquisition \& Instrumentation Depth:} Evaluates the breadth of emitted signal modalities ($d_{1.1}$: $M, L, T, E, P$), adherence to open, vendor-neutral collection protocols ($d_{1.2}$: OpenTelemetry OTLP and W3C TraceContext), and visibility into kernel-level socket and scheduler operations via non-intrusive eBPF probes ($d_{1.3}$).
+    \item \textbf{$D_2$ -- Semantic Context \& Cross-Pillar Correlation:} Assesses the structural coupling across telemetry streams, encompassing automatic Kubernetes topological enrichment ($d_{2.1}$: Pod UID, Node, Deployment labels), bi-directional context propagation ($d_{2.2}$: W3C \texttt{trace\_id} injection into structured JSON logs and OpenMetrics Exemplars linking histograms to traces), and causal self-time graph isolation ($d_{2.3}$: $T_{\text{self}}$ computation).
+    \item \textbf{$D_3$ -- Diagnostic \& Analytical Intelligence (RCA):} Captures the operational efficacy of fault management, measured through automated anomaly detection latency ($d_{3.1}$: $MTTD$), multi-pillar root-cause localization speed and accuracy ($d_{3.2}$: $MTTDiag, Acc$), and immunity to cascading upstream misattribution alongside explainable diagnostic evidence ($d_{3.3}$).
+    \item \textbf{$D_4$ -- Resilience Verification \& SLO Governance:} Bridges observability with Reliability and Chaos Engineering \cite{basiri_2016, beyer_2016}, tracking multi-window SLI/SLO error-budget enforcement ($d_{4.1}$), continuous verification of telemetry pipelines via declarative Chaos Engineering steady-state probes ($d_{4.2}$), and closed-loop automated remediation triggers ($d_{4.3}$).
+    \item \textbf{$D_5$ -- Instrumentation Economics \& Probe Effect Governance:} Formalizes operational sustainability and FinOps discipline, auditing steady-state CPU and memory overhead budgets ($d_{5.1}$: $\Delta_{\text{CPU}}, \Delta_{\text{RAM}} < 15\%$), intelligent tail-based or anomaly-aware sampling ($d_{5.2}$), and index-free object storage architectures that prevent high-cardinality index explosion ($d_{5.3}$).
+\end{itemize}
+
+\input{tables/tbl-cn-omm-dimensions}
+
+\subsection{The Five Evolutionary Maturity Levels and Stage-Gate Matrix}
+\label{subsec:maturity_levels}
+
+Intersecting the five orthogonal dimensions with five evolutionary stages yields the $5 \times 5$ CN-OMM Architectural Matrix presented in Table~\ref{tab:cn_omm_matrix}. Each level represents a distinct architectural regime characterized by formal state properties:
+
+\input{tables/tbl-cn-omm-matrix}
+
+\subsubsection{Level 1: Opaque (Blind Execution)}
+At Level 1, the system operates as a black box ($\mathcal{O}(t) \approx \emptyset$). Workloads emit unstructured text to local container \texttt{stdout} files that vanish upon Pod eviction or node rescheduling. Because $\text{rank}(\mathcal{O}) = 0$, internal fault states cannot be reconstructed; outages are discovered externally by end users, and post-mortem debugging relies on manual reproduction attempts.
+
+\subsubsection{Level 2: Reactive Monitoring (Disjoint Infrastructure Polling)}
+At Level 2, platform teams collect infrastructure-level utilization counters (\texttt{kubelet}/cAdvisor CPU and memory metrics) and perform reactive manual triage via Kubernetes CLI utilities (\texttt{kubectl top}, \texttt{kubectl logs}, \texttt{kubectl describe pod}). While binary container failures (e.g., \texttt{OOMKilled} or \texttt{CrashLoopBackOff}) are visible through control-plane events $E(t)$, the architecture lacks request-scoped context or historical correlation. Consequently, under non-destructive degradations (such as network packet delay or cgroup CPU throttling), engineers face severe cognitive overload, resulting in timeouts ($MTTDiag \ge 300\,\text{s}$) and low localization accuracy.
+
+\subsubsection{Level 3: Fragmented Pillar Observability (Siloed Signals)}
+At Level 3, organizations deploy dedicated collection agents for metrics (e.g., Prometheus), logs (e.g., Elasticsearch/Fluentd), and distributed traces (e.g., Jaeger/Zipkin). Despite high financial investment and storage footprint, these signals reside in \textbf{isolated analytical silos} ($D_2 < 4$). Logs lack embedded W3C \texttt{trace\_id} fields, metrics lack Exemplars, and trace engines evaluate spans using raw inclusive duration $D(s_i)$ rather than $T_{\text{self}}(s_i)$. As proven in Section~\ref{sec:empirical_validation}, Level 3 systems fall victim to the \textit{Monomodal Additivity Fallacy}: under synchronous microservice cascades, monomodal trace sorting achieves $0\%$ root-cause accuracy due to \textit{Cascading Span Bias}, while full-text log indexing inflates storage and CPU overhead ($D_5$).
+
+\subsubsection{Level 4: Context-Correlated Multimodal Observability (Semantic Fusion)}
+Level 4 represents the deterministic synthesis of the dialectical tension between visibility and overhead (instantiated by our \textbf{PANOPTES} reference architecture). All signals are unified under OpenTelemetry (OTLP) and enriched with zero-code eBPF kernel telemetry ($D_1 \ge 4$). Crucially, Level 4 enforces strict cross-pillar context coupling ($D_2 \ge 4$): every structured log entry carries active W3C \texttt{trace\_id}/\texttt{span\_id} attributes, metric histograms expose OpenMetrics Exemplars, and the diagnostic engine computes exclusive span self-time $T_{\text{self}}(s_i)$ fused with container resource saturation and log error rates. Furthermore, observability pipelines are actively verified by declarative Chaos Engineering steady-state probes ($D_4 \ge 4$) and backed by index-free storage (Grafana Loki and Tempo) that constrains steady-state CPU overhead below $\theta_{\text{CPU}} = 15\%$ ($D_5 \ge 4$).
+
+\subsubsection{Level 5: Autonomous \& Adaptive Self-Healing (Closed-Loop AIOps)}
+At Level 5, the correlated multimodal foundation of Level 4 is extended into a continuous, closed-loop cybernetic control system. Telemetry sampling and signal weights ($w_i = \alpha_i S_i$ \cite{amgothu_2025}) are dynamically modulated in real time based on error-budget burn rates and FinOps/GreenOps carbon constraints ($D_5 = 5$). Root-cause localization leverages explainable Graph Neural Networks (GNNs) or neuro-symbolic LLM agents grounded in the causal $T_{\text{self}}$ topology ($D_3 = 5$), automatically triggering verified Kubernetes remediation workflows (canary rollbacks, dynamic cgroup vertical scaling, or service-mesh circuit breaking) without human intervention ($D_4 = 5$).

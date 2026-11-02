@@ -1,0 +1,137 @@
+\documentclass[sigconf, balance=false]{acmart}
+
+\setcopyright{acmlicensed}
+\copyrightyear{2026}
+\acmYear{2026}
+\acmDOI{XXXXXXX.XXXXXXX}
+
+\acmConference[ACM Conf '26]{Make sure to enter the correct conference title from your rights confirmation email}{2026}{Location, Country}
+\acmISBN{978-1-4503-XXXX-X/2026/XX}
+
+\AtBeginDocument{%
+  \providecommand\BibTeX{{%
+    Bib\TeX}}}
+
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds, calc}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{stfloats}
+\usepackage{placeins}
+\usepackage{enumitem}
+\usepackage{xurl}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% Custom colors for TikZ and annotations
+\definecolor{amber}{rgb}{1.0, 0.75, 0.0}
+
+% Relax line-breaking penalties in narrow two-column layout to prevent margin overflows
+\emergencystretch=1.5em
+\sloppy
+
+% Tune float placement parameters so figures and tables stay close to their text
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.85}
+\renewcommand{\dbltopfraction}{0.95}
+\renewcommand{\dblfloatpagefraction}{0.85}
+\setcounter{topnumber}{5}
+\setcounter{bottomnumber}{5}
+\setcounter{totalnumber}{10}
+\setcounter{dbltopnumber}{5}
+
+\begin{document}
+
+\title[The Cloud-Native Observability Maturity Model (CN-OMM)]{The Cloud-Native Observability Maturity Model (CN-OMM): A Design Science Formalization, Automated Assessment Protocol, and Empirical Chaos Validation}
+
+\author{Fagner Silva}
+\authornote{Both authors contributed equally to this research.}
+\affiliation{%
+  \institution{Centro de Inform\'{a}tica, UFPE}
+  \city{Recife}
+  \state{Pernambuco}
+  \country{Brazil}
+}
+\email{ffcs@cin.ufpe.br}
+\orcid{0000-0000-0000-0000}
+
+\author{Jackson Raniel}
+\affiliation{%
+  \institution{Universidade de Pernambuco - Campus Caruaru}
+  \city{Caruaru}
+  \state{Pernambuco}
+  \country{Brazil}
+}
+\email{jackson.florencio@upe.br}
+
+\author{Vin\'{i}cius Cardoso Garcia}
+\authornotemark[1]
+\affiliation{%
+  \institution{Centro de Inform\'{a}tica, UFPE}
+  \city{Recife}
+  \state{Pernambuco}
+  \country{Brazil}
+}
+\email{vcg@cin.ufpe.br}
+
+\renewcommand{\shortauthors}{Silva et al.}
+
+\begin{abstract}
+Modern cloud-native microservices orchestrated by Kubernetes exhibit high topological dynamism and stochastic failure modes that render traditional reactive monitoring insufficient. To guide architectural evolution, industry vendors and recent preliminary studies have proposed observability maturity frameworks. However, a systematic inspection reveals that existing proposals suffer from three structural flaws: (i) \textit{vendor lock-in bias} that conflates maturity with telemetry volume rather than causal diagnostic capability; (ii) \textit{probe effect blindness} that ignores the CPU and memory overhead imposed by deep instrumentation; and (iii) the \textit{monomodal additivity fallacy}, which assumes that adopting isolated telemetry pillars (e.g., distributed tracing) monotonically improves fault localization. Furthermore, over $50\%$ of maturity models in software engineering lack empirical validation (the ``Validation Gap''). Grounded in Design Science Research (DSR) guidelines (Hevner et al.; Becker et al.; De Bruin et al.), Process Theory, and Configurational Equifinality, this paper formalizes the \textbf{Cloud-Native Observability Maturity Model (CN-OMM)}. Structurally, CN-OMM defines a $5\text{-Level} \times 5\text{-Dimension}$ stage-gate matrix spanning 15 capability sub-components: (D1) Telemetry Acquisition \& Depth, (D2) Semantic Context \& Cross-Pillar Correlation, (D3) Diagnostic \& Analytical Intelligence, (D4) Resilience Verification \& SLO Governance, and (D5) Instrumentation Economics \& Probe Effect Governance. To replace subjective Likert questionnaires, we introduce an \textbf{Automated Maturity Assessment Protocol} featuring 15 Quantitative Capability Indicators (QCIs) and a non-compensatory mathematical scoring function. Finally, we conduct a Type-3 real-system empirical validation across $N=30$ paired Chaos Engineering trials on a polyglot Kubernetes benchmark. Results demonstrate that advancing to Level 3 (monomodal tracing) without fulfilling the configurational stage-gate of semantic correlation (D2) collapses diagnostic accuracy to $0.00\%$ due to \textit{Cascading Span Bias}, whereas progressing to Level 4 (multimodal semantic correlation with exclusive self-time decomposition) elevates diagnostic accuracy to $83.33\%$ ($p = 7.74 \times 10^{-7}$) and reduces median diagnostic latency by $94.24\%$ ($300.00\,\text{s} \rightarrow 17.27\,\text{s}$, $p = 3.06 \times 10^{-5}$) while bounding steady-state CPU overhead at $9.51\% \pm 2.14\%$ ($p = 6.52 \times 10^{-9}$).
+\end{abstract}
+
+\begin{CCSXML}
+<ccs2012>
+   <concept>
+       <concept_id>10011007.10011074.10011075</concept_id>
+       <concept_desc>Software and its engineering~Software architectures</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10011007.10011074.10011099.10011102.10011103</concept_id>
+       <concept_desc>Software and its engineering~Software testing and debugging</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+   <concept>
+       <concept_id>10010520.10010521.10010537.10003100</concept_id>
+       <concept_desc>Computer systems organization~Cloud computing</concept_desc>
+       <concept_significance>500</concept_significance>
+   </concept>
+</ccs2012>
+\end{CCSXML}
+
+\ccsdesc[500]{Software and its engineering~Software architectures}
+\ccsdesc[500]{Software and its engineering~Software testing and debugging}
+\ccsdesc[500]{Computer systems organization~Cloud computing}
+
+\keywords{Observability Maturity Model, Design Science Research, Cloud-Native Microservices, Kubernetes, OpenTelemetry, Chaos Engineering, Automated Maturity Assessment, Root-Cause Analysis}
+
+\frenchspacing
+\maketitle
+
+\input{sections/01.introduction}
+
+\input{sections/02.background_foundations}
+
+\input{sections/03.critical_analysis_existing_models}
+
+\input{sections/04.cn_omm_formalization}
+
+\input{sections/05.automated_assessment_protocol}
+
+\input{sections/06.empirical_validation}
+
+\input{sections/07.discussion_threats}
+
+\input{sections/08.conclusion}
+
+\FloatBarrier
+\bibliographystyle{ACM-Reference-Format}
+\bibliography{references}
+
+\end{document}
+\endinput

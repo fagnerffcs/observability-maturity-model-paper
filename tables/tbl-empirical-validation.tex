@@ -1,0 +1,23 @@
+\begin{table*}[t]
+\centering
+\caption{Type-3 Real-System Empirical Validation of CN-OMM Maturity Levels Across $N=30$ Paired Chaos Engineering Trials (CNCF OpenTelemetry Astronomy Shop on Kubernetes)}
+\label{tab:empirical_validation}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.20}
+\begin{tabularx}{\textwidth}{l c c c c c c c >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Evaluated Architecture} & \textbf{Dimension Profile} & \textbf{Arith.} & \textbf{Stage-Gate} & \textbf{Euclid.} & \textbf{Median $MTTDiag$} & \textbf{Global $Acc$} & \textbf{Steady-State} & \textbf{Observed Empirical Behavior \& Configurational Diagnosis} \\
+\textbf{(Operational Regime)} & $(D_1, D_2, D_3, D_4, D_5)$ & \textbf{Mean} & $\textbf{Level}_{\text{eff}}$ & $\mathcal{I}(\mathcal{S})$ & \textbf{[IQR] (s)} & \textbf{(95\% CI)} & $\Delta_{\text{CPU}}$ \textbf{(\%)} & \\
+\midrule
+\textbf{Baseline A: Native CLI} \newline (\texttt{kubectl top/logs}) & $(2.0, 2.0, 2.0, 2.0, 2.3)$ & $2.06$ & \textbf{Level 2} & $0.267$ & $300.00\,\text{s}$ \newline $[300.0, 300.0]$ & $20.00\%$ \newline $(6/30)$ & $1.12 \pm 0.45\%$ & Detects crashloops ($6/10$ Pod Kills) but is $100\%$ blind to process-invisible network latency and CPU throttling ($24/30$ timeouts). \\
+\midrule
+\textbf{Baseline B: Siloed Tracing} \newline (Jaeger Inclusive Latency) & $(3.3, \mathbf{2.3}, 3.0, 3.0, 3.0)$ & $2.92$ & \textbf{Level 2*} \newline \textit{(Bottleneck $D_2$)} & $0.478$ & $39.15\,\text{s}$ \newline $[36.2, 42.1]$ & $0.00\%$ \newline $(0/30)$ & $5.40 \pm 1.18\%$ & \textbf{Monomodal Additivity Fallacy:} Fast anomaly detection, but $100\%$ upstream misattribution due to \textit{Cascading Span Bias} ($D_2 < 4$). \\
+\midrule
+\textbf{Treatment: PANOPTES} \newline (Multimodal + $T_{\text{self}}$ + Probes) & $(4.3, 4.3, 4.3, 4.3, 4.3)$ & $4.30$ & \textbf{Level 4} & $0.833$ & $\mathbf{17.27\,\text{s}}$ \newline $[14.6, 20.5]$ & $\mathbf{83.33\%}$ \newline $(25/30)$ & $\mathbf{9.51 \pm 2.14\%}$ & \textbf{Configurational Synergy:} Satisfying $D_2 \ge 4$ ($T_{\text{self}}$ + Exemplars + W3C Logs) eliminates cascading bias while keeping $\Delta_{\text{CPU}} < 15\%$. \\
+\midrule
+\multicolumn{5}{l}{\textbf{Hypothesis Test (Level 4 vs.\ Level 2/3 Baselines):}} & $p = 3.06 \times 10^{-5}$ \newline ($\hat{A}_{12} = 0.817$) & $p = 7.74 \times 10^{-7}$ \newline (McNemar $7.8\text{e-}5$) & $p = 6.52 \times 10^{-9}$ \newline (One-sample $<15\%$) & \textbf{Statistically confirms non-linear diagnostic jump at Level 4 and validates non-compensatory Stage-Gate rule.} \\
+\bottomrule
+\multicolumn{9}{l}{\scriptsize \textbf{*Note on Baseline B:} Although an arithmetic average yields $2.92 \approx \text{Level 3}$, the non-compensatory CN-OMM Stage-Gate rule ($\text{Level}_{\text{eff}} = \min_k \lfloor C(D_k) \rfloor$) flags the bottleneck in $D_2 = 2.3$ (lack of $T_{\text{self}}$ and cross-pillar correlation).}
+\end{tabularx}
+\end{table*}

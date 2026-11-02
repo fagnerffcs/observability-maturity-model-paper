@@ -1,0 +1,58 @@
+\section{Empirical Validation}
+\label{sec:empirical_validation}
+
+To overcome the ``Validation Gap'' documented by Wendler \cite{wendler_2012} and fulfill Requirement \textbf{R3} of Becker et al.\ \cite{becker_2009}, we evaluate the CN-OMM using a multi-methodological strategy aligned with Helgesson et al.'s evaluation taxonomy \cite{helgesson_2012}: (i) a \textbf{Type-1 Methodological \& Structural Audit} verifying compliance with DSR requirements R1--R8, and (ii) a \textbf{Type-3 Real-System Controlled Empirical Experiment} on a production-grade Kubernetes microservice benchmark subjected to Chaos Engineering fault injection.
+
+\subsection{Type-1 Evaluation: DSR Compliance Audit (Becker R1--R8)}
+\label{subsec:type1_evaluation}
+
+Table~\ref{tab:becker_evaluation} summarizes the verification of the CN-OMM against Becker, Knackstedt, and P\"{o}ppelbu\ss's eight mandatory DSR requirements \cite{becker_2009}. Unlike conceptual models that rely on ad-hoc stage labels \cite{patel_2025, grafana_omm_2024}, CN-OMM satisfies every methodological criterion: it is grounded in a systematic comparison against seven prior frameworks (R1), evolved iteratively across literature synthesis, mathematical modeling, and chaos calibration (R2), combines theoretical and empirical validation (R3, R4), addresses well-defined cloud-native diagnostic and FinOps bottlenecks (R5, R6), and delivers both practitioner-ready matrices and reproducible open-source audit scripts (R7, R8).
+
+\input{tables/tbl-becker-evaluation}
+
+\subsection{Type-3 Evaluation: Experimental Design and Kubernetes Testbed}
+\label{subsec:type3_design}
+
+To address Research Question \textbf{RQ3}, we instantiated three operational observability architectures corresponding to CN-OMM Levels 2, 3, and 4 on a multi-node Kubernetes cluster (v1.30, containerd runtime, Linux kernel 6.6) hosting the polyglot \textbf{CNCF OpenTelemetry Astronomy Shop} microservice benchmark (14 interconnected services in Go, Rust, Python, Java, TypeScript, .NET, and C++ under continuous Locust load generation):
+\begin{enumerate}[leftmargin=*, nosep]
+    \item \textbf{Baseline A -- Native CLI Regime (CN-OMM Level 2):} Relies on standard Kubernetes control-plane events, \texttt{kubelet}/cAdvisor metrics, and automated CLI diagnostic scraping (\texttt{kubectl get/describe pods}, \texttt{kubectl top}, \texttt{kubectl logs}) without distributed context propagation.
+    \item \textbf{Baseline B -- Monomodal Tracing Regime (CN-OMM Level 3 Attempt):} Deploys OpenTelemetry SDKs exporting distributed traces to Jaeger/Tempo, ranking root-cause candidates by maximum inclusive span tail latency $P_{95}(D(s_i))$ without cross-pillar log/metric correlation or exclusive self-time isolation ($D_2 = 2.3$).
+    \item \textbf{Treatment -- PANOPTES Correlated Multimodal Regime (CN-OMM Level 4):} Instantiates full Level 4 compliance across all five dimensions: OpenTelemetry Collector + eBPF instrumentation ($D_1 = 4.3$), mandatory W3C TraceContext in JSON logs, OpenMetrics Exemplars, and exclusive self-time decomposition $T_{\text{self}}(s_i)$ ($D_2 = 4.3$), automated multi-pillar RCA ($D_3 = 4.3$), declarative Chaos Mesh steady-state verification probes ($D_4 = 4.3$), and index-free Grafana LGTM (Loki, Grafana, Tempo, Mimir/Prometheus) storage ($D_5 = 4.3$).
+\end{enumerate}
+
+We executed $N = 30$ paired, stratified Chaos Engineering fault injection trials (10 \texttt{NetworkChaos} TCP latency injections of $200\,\text{ms}$ on \texttt{paymentservice}; 10 \texttt{PodChaos} abrupt container terminations on \texttt{cartservice}; and 10 \texttt{StressChaos} CPU cgroup saturations at $95\%$ load on \texttt{checkoutservice}), complemented by $N = 60$ paired injector architecture trials (30 Chaos Mesh DaemonSet vs.\ 30 LitmusChaos transient runner trials) to audit Dimension $D_4$ and $D_5$ overhead invariance. Following Wohlin et al.\ \cite{wohlin_2012} and Arcuri and Briand \cite{arcuri_2014}, we evaluate non-parametric Wilcoxon signed-rank tests, Vargha-Delaney $\hat{A}_{12}$ effect sizes, Fisher's exact tests, and McNemar's paired nominal tests at $\alpha = 0.05$.
+
+\subsection{Empirical Results: Validating Stage-Gate Non-Compensation and Level 4 Superiority}
+\label{subsec:empirical_results}
+
+Table~\ref{tab:empirical_validation} and Figures~\ref{fig:omm_radar_profiles}--\ref{fig:omm_pareto_frontier} present the quantitative outcomes of the Type-3 validation.
+
+\input{tables/tbl-empirical-validation}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/fig_omm_radar_profiles.pdf}
+    \caption{Five-Dimensional CN-OMM Capability Profiles across Evaluated Kubernetes Regimes, Illustrating the $D_2$ Semantic Correlation Stage-Gate Bottleneck in Siloed Level 3 Tracing vs.\ Balanced Level 4 Multimodal Fusion.}
+    \label{fig:omm_radar_profiles}
+\end{figure}
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{figures/fig_omm_pareto_frontier.pdf}
+    \caption{Empirical Performance Trajectory across CN-OMM Maturity Stages: Root-Cause Diagnostic Accuracy ($Acc$), Median Diagnostic Latency ($MTTDiag$), and Steady-State CPU Probe Effect ($\Delta_{\text{CPU}}$) over $N=30$ Paired Chaos Trials.}
+    \label{fig:omm_pareto_frontier}
+\end{figure}
+
+\subsubsection{Empirical Proof of the Monomodal Additivity Fallacy (Level 3 Bottleneck)}
+A striking empirical finding in Table~\ref{tab:empirical_validation} is the performance of \textbf{Baseline B (Siloed Tracing)}. Under a traditional compensatory maturity model, Baseline B scores an arithmetic mean of $\bar{C} = 2.92 \approx \text{Level 3}$ because it deploys distributed tracing SDKs ($D_1 = 3.3$) and reduces symptom detection latency to a median of $39.15\,\text{s}$. However, its root-cause localization accuracy collapses to \textbf{$0.00\%$ ($0/30$ correct diagnoses)}---performing worse than basic Level 2 CLI inspection ($20.00\%, 6/30$).
+
+In every single trial ($30/30$), ranking spans by inclusive duration $D(s_i)$ caused the monomodal trace engine to blame the upstream ingress gateway (\texttt{frontend}) rather than the true downstream fault (\texttt{paymentservice}, \texttt{cartservice}, or \texttt{checkoutservice}), confirming our mathematical formulation of \textbf{Cascading Span Bias} in Equation~(\ref{eq:inclusive_duration}). Crucially, the CN-OMM's non-compensatory Stage-Gate equation ($\text{Level}_{\text{eff}} = \min_k \lfloor C(D_k) \rfloor = 2$) accurately predicts this failure by flagging the configurational bottleneck in $D_2 = 2.3$ (absence of $T_{\text{self}}$ decomposition and cross-pillar log/metric correlation).
+
+\subsubsection{Quantitative Breakthrough at CN-OMM Level 4 (PANOPTES)}
+When the cluster satisfies all five dimensional stage-gates at \textbf{Level 4 ($\text{Level}_{\text{eff}} = 4, \mathcal{I}(\mathcal{S}) = 0.833$)}, diagnostic performance exhibits a statistically decisive phase transition:
+\begin{itemize}[leftmargin=*, nosep]
+    \item \textbf{Root-Cause Accuracy ($Acc$):} Jumps from $20.00\%$ (Level 2) and $0.00\%$ (siloed Level 3) to \textbf{$83.33\%$ ($25/30$)} (Fisher's exact $p = 7.74 \times 10^{-7}$, odds ratio $\text{OR} = 20.0$; McNemar's paired $p = 7.83 \times 10^{-5}$). Stratified by fault type, Level 4 achieves $90\%$ accuracy on network degradation ($9/10$), $80\%$ on abrupt pod termination ($8/10$), and $80\%$ on CPU saturation ($8/10$).
+    \item \textbf{Diagnostic Latency ($MTTDiag$):} Plummets by \textbf{$94.24\%$} from a median of $300.00\,\text{s}$ ($\text{IQR} = 0.0\,\text{s}$) in Level 2 to \textbf{$17.27\,\text{s}$ ($\text{IQR} = 5.91\,\text{s}$)} in Level 4 (Wilcoxon signed-rank $p = 3.06 \times 10^{-5}$, Vargha-Delaney $\hat{A}_{12} = 0.817$ [large effect], Cliff's $\delta = +0.633$).
+    \item \textbf{Dimension $D_5$ (Probe Effect Governance):} Across continuous steady-state profiling, the full Level 4 multimodal pipeline imposes a marginal CPU overhead of \textbf{$\Delta_{\text{CPU}} = 9.51\% \pm 2.14\%$} (95\% CI $[8.71\%, 10.31\%]$), remaining statistically well below the $15.0\%$ stability budget (one-sample $t$-test $t = -14.05, p = 6.52 \times 10^{-9}$).
+    \item \textbf{Dimension $D_4$ (Chaos Verification Overhead Invariance):} Furthermore, our $N=60$ cross-engine verification confirms that coupling Level 4 observability with resident eBPF/DaemonSet chaos injectors (Chaos Mesh) vs.\ transient Pod injectors (LitmusChaos) preserves steady-state application latency while isolating control-plane scheduling overhead ($141\,\text{ms}$ vs.\ $3{,}840\,\text{ms}$, $p = 1.73 \times 10^{-6}$), enabling continuous automated verification of $\text{QCI}_{4.2}$ in production.
+\end{itemize}

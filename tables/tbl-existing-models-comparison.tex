@@ -1,0 +1,25 @@
+\begin{table*}[t]
+\centering
+\caption{Critical Evaluation of Existing Academic and Industrial Observability Maturity Models Against Design Science Research and Cloud-Native Requirements (Becker et al.\ Requirement R1)}
+\label{tab:existing_models_comparison}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\textwidth}{l l c c c c c c c >{\raggedright\arraybackslash}X}
+\toprule
+\textbf{Model / Source} & \textbf{Sector \& Scope} & \textbf{Stages} & \textbf{DSR} & \textbf{Math.} & \textbf{Cross-Pillar} & \textbf{Probe Effect} & \textbf{Auto.} & \textbf{Empir.} & \textbf{Primary Scientific / Architectural Limitation} \\
+ & & & \textbf{(R1--R8)} & \textbf{Form.} & \textbf{Causal ($T_{\text{self}}$)} & \textbf{Gov. ($\Omega$)} & \textbf{Assess.} & \textbf{Eval.} & \\
+\midrule
+Duarte \& Silva \cite{duarte_2013} & Academic (Cloud ITSM) & 5 & $\ominus$ & $\circ$ & $\circ$ & $\circ$ & $\circ$ & Type 2 & Focuses on high-level CMMI-SVC cloud governance; lacks microservice telemetry or RCA semantics. \\
+Grafana Labs \cite{grafana_omm_2024} & Industry (Vendor) & 4 & $\circ$ & $\circ$ & $\ominus$ & $\circ$ & $\circ$ & None & Tool-adoption checklist; ignores telemetry overhead ($\Delta_{\text{CPU}}$) and cascading trace bias. \\
+Dynatrace \cite{dynatrace_omm_2024} & Industry (Vendor) & 5 & $\circ$ & $\circ$ & $\ominus$ & $\circ$ & $\circ$ & None & Proprietary agent lock-in bias; lacks open standards (OTel/W3C) and formal stage-gate rules. \\
+CNCF TAG-Obs \cite{cncf_obs_2024} & Industry (Consortium) & N/A & $\circ$ & $\circ$ & $\ominus$ & $\ominus$ & $\circ$ & None & Descriptive taxonomy of signals ($M,L,T,P$); lacks prescriptive maturity levels or scoring metrics. \\
+WWT / Enterprise \cite{wwt_omm_2025} & Industry (Consultancy) & 4 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & $\circ$ & None & Qualitative organizational survey; conflates dashboard consolidation with root-cause accuracy. \\
+Patel \cite{patel_2025} & Academic (Big Data) & 3 & $\circ$ & $\circ$ & $\circ$ & $\circ$ & $\circ$ & None & Coarse 3-tier conceptual sketch (\textit{Basic, Advanced, Predictive}); zero DSR rigor or empirical validation. \\
+Amgothu et al.\ \cite{amgothu_2025} & Academic (DevOps/AIOps) & N/A & $\circ$ & $\ominus$ & $\ominus$ & $\ominus$ & $\circ$ & Type 2 & Proposes adaptive signal weighting (AOIM), but relies on informal whitepapers for maturity stages. \\
+\midrule
+\textbf{CN-OMM (Proposed)} & \textbf{Academic (Cloud-Native)} & \textbf{5} & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & $\bullet$ & \textbf{Type 1 \& 3} & \textbf{Full $5\times5$ DSR stage-gate model, 15 automated QCIs, non-compensatory scoring, and $N=30$ chaos validation.} \\
+\bottomrule
+\multicolumn{10}{l}{\scriptsize \textbf{Legend:} $\bullet$ = Fully Addressed; $\ominus$ = Partially / Informally Addressed; $\circ$ = Not Addressed. \textbf{Empir.\ Eval.:} Helgesson et al.\ \cite{helgesson_2012} taxonomy (Type 1: Offline/Theoretical; Type 2: Case Study/Survey; Type 3: Controlled Real-System Experiment).}
+\end{tabularx}
+\end{table*}

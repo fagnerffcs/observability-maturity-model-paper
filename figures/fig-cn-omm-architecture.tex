@@ -1,0 +1,73 @@
+\begin{figure*}[t]
+\centering
+\begin{tikzpicture}[
+    font=\sffamily\scriptsize,
+    >=Latex,
+    box/.style={draw=black!75, rounded corners=3pt, align=center, minimum height=0.85cm, inner sep=4pt, line width=0.6pt},
+    dimbox/.style={box, fill=blue!6, minimum width=2.85cm, minimum height=1.05cm},
+    lvlbox/.style={box, fill=teal!8, minimum width=2.85cm, minimum height=0.95cm},
+    gatebox/.style={box, fill=amber!12, draw=orange!80!black, minimum width=3.1cm, minimum height=1.15cm},
+    evalbox/.style={box, fill=purple!7, draw=purple!70!black, minimum width=2.85cm, minimum height=1.05cm},
+    arr/.style={->, thick, draw=black!75}
+]
+
+% Column 1: 5 Orthogonal Dimensions
+\node[font=\sffamily\bfseries\footnotesize, anchor=south] at (0, 3.0) {1. Five Orthogonal Dimensions};
+\node[dimbox] (d1) at (0, 2.2) {\textbf{$D_1$: Telemetry Depth}\\($M, L, T, E, P$ + eBPF)};
+\node[dimbox] (d2) at (0, 1.0) {\textbf{$D_2$: Semantic Context}\\(W3C + Exemplars + $T_{\text{self}}$)};
+\node[dimbox] (d3) at (0, -0.2) {\textbf{$D_3$: Diagnostic RCA}\\($MTTDiag, Acc$, Bias Free)};
+\node[dimbox] (d4) at (0, -1.4) {\textbf{$D_4$: Resilience \& SLOs}\\(Chaos Probes \& Budgets)};
+\node[dimbox] (d5) at (0, -2.6) {\textbf{$D_5$: Probe Economics}\\($\Delta_{\text{CPU}} < 15\%$, Index-Free)};
+
+% Column 2: Automated Assessment Engine
+\node[font=\sffamily\bfseries\footnotesize, anchor=south] at (4.5, 3.0) {2. Automated Assessment};
+\node[gatebox] (qci) at (4.5, 1.45) {\textbf{15 Declarative QCIs}\\PromQL, OTLP Schema,\\K8s \& Chaos CRD Audit};
+\node[gatebox] (dialectic) at (4.5, -0.2) {\textbf{Dialectical Constraints}\\Diagnostic Info $I(\mathbf{x};\mathcal{O})$\\vs.\ Probe Overhead $\Omega(\mathcal{O})$};
+\node[gatebox] (stagegate) at (4.5, -1.85) {\textbf{Non-Compensatory Gate}\\$\text{Level}_{\text{eff}} = \min_k \lfloor C(D_k) \rfloor$\\+ Euclidean Index $\mathcal{I}(\mathcal{S})$};
+
+% Column 3: 5 Evolutionary Maturity Stages
+\node[font=\sffamily\bfseries\footnotesize, anchor=south] at (9.0, 3.0) {3. Evolutionary Stage-Gates};
+\node[lvlbox, fill=gray!12] (l1) at (9.0, 2.2) {\textbf{Level 1: Opaque}\\($\mathcal{O} = \emptyset$, Post-Mortem)};
+\node[lvlbox, fill=red!8] (l2) at (9.0, 1.0) {\textbf{Level 2: Reactive CLI}\\(\texttt{kubectl}, $Acc = 20\%$)};
+\node[lvlbox, fill=orange!10] (l3) at (9.0, -0.2) {\textbf{Level 3: Fragmented}\\(Siloed Tracing, $Acc = 0\%$)};
+\node[lvlbox, fill=green!14, draw=green!50!black, line width=1.0pt] (l4) at (9.0, -1.4) {\textbf{Level 4: Correlated}\\(PANOPTES, $Acc = 83.3\%$)};
+\node[lvlbox, fill=blue!12] (l5) at (9.0, -2.6) {\textbf{Level 5: Autonomous}\\(Adaptive AIOps Loop)};
+
+% Column 4: Multi-Method DSR Validation
+\node[font=\sffamily\bfseries\footnotesize, anchor=south] at (13.3, 3.0) {4. DSR \& Empirical Validation};
+\node[evalbox] (v1) at (13.3, 1.45) {\textbf{Helgesson Type-1 Eval.}\\Becker R1--R8 Audit vs.\\7 Academic/Vendor Models};
+\node[evalbox] (v2) at (13.3, -0.2) {\textbf{Helgesson Type-3 Eval.}\\$N=30$ Paired Chaos Trials\\($MTTDiag: 300\text{s} \rightarrow 17.3\text{s}$)};
+\node[evalbox] (v3) at (13.3, -1.85) {\textbf{Probe Effect Verification}\\$N=60$ Injector Trials\\($\Delta_{\text{CPU}} = 9.51\% < 15\%$)};
+
+% Connections from D1-D5 to Assessment
+\draw[arr] (d1.east) -- (qci.west);
+\draw[arr] (d2.east) -- (qci.west);
+\draw[arr] (d2.east) -- (dialectic.west);
+\draw[arr] (d3.east) -- (dialectic.west);
+\draw[arr] (d4.east) -- (stagegate.west);
+\draw[arr] (d5.east) -- (dialectic.west);
+\draw[arr] (d5.east) -- (stagegate.west);
+
+\draw[arr] (qci.south) -- (dialectic.north);
+\draw[arr] (dialectic.south) -- (stagegate.north);
+
+% Connections from Assessment to Levels
+\draw[arr] (stagegate.east) -- (l2.west);
+\draw[arr] (stagegate.east) -- (l3.west);
+\draw[arr] (stagegate.east) -- (l4.west);
+\draw[arr] (l1.south) -- (l2.north);
+\draw[arr] (l2.south) -- (l3.north);
+\draw[arr] (l3.south) -- (l4.north);
+\draw[arr] (l4.south) -- (l5.north);
+
+% Connections to Validation
+\draw[arr] (l2.east) -- (v2.west);
+\draw[arr] (l3.east) -- (v2.west);
+\draw[arr] (l4.east) -- (v2.west);
+\draw[arr] (l4.east) -- (v3.west);
+\draw[arr] (qci.east) to[out=15, in=165] (v1.west);
+
+\end{tikzpicture}
+\caption{Methodological and Architectural Overview of the Cloud-Native Observability Maturity Model (CN-OMM), Integrating Five Orthogonal Dimensions ($D_1$--$D_5$), Automated Declarative Auditing (15 QCIs), Non-Compensatory Stage-Gate Scoring, and Type-1/Type-3 Empirical Chaos Validation.}
+\label{fig:cn_omm_architecture}
+\end{figure*}

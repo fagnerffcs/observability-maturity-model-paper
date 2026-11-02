@@ -1,0 +1,33 @@
+\begin{table*}[t]
+\centering
+\caption{The Five Orthogonal Dimensions ($D_1$--$D_5$), Fifteen Sub-Components ($d_{k.j}$), and Automated Quantitative Capability Indicators (QCIs) of the CN-OMM}
+\label{tab:cn_omm_dimensions}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.18}
+\begin{tabularx}{\textwidth}{l l >{\raggedright\arraybackslash}p{4.3cm} >{\raggedright\arraybackslash}X l}
+\toprule
+\textbf{Dim.} & \textbf{Code} & \textbf{Sub-Component Name} & \textbf{Quantitative Capability Indicator (QCI) \& Declarative Cluster Audit Rule} & \textbf{Target Metric / Threshold} \\
+\midrule
+\multirow{3}{*}{\textbf{$D_1$}} & $d_{1.1}$ & Multi-Signal Telemetry Coverage & Fraction of active Kubernetes workloads emitting structured $M, L, T, E,$ and continuous profiles $P$. & $\text{QCI}_{1.1} = |\mathcal{V}_{\text{inst}}| / |\mathcal{V}_{\text{total}}| \ge 0.95$ \\
+ & $d_{1.2}$ & Vendor-Neutral OTel Standardization & Proportion of telemetry pipelines using open OTLP/W3C schemas without proprietary lock-in. & $\text{QCI}_{1.2} = \text{OTLP}_{\text{flows}} / \text{Total}_{\text{flows}} = 1.0$ \\
+ & $d_{1.3}$ & Kernel \& Runtime Depth (eBPF) & Coverage of non-intrusive kernel/socket/cgroup telemetry (e.g., Beyla/Cilium eBPF probes). & $\text{QCI}_{1.3} \in [0, 1]$ (L4 $\ge 0.80$) \\
+\midrule
+\multirow{3}{*}{\textbf{$D_2$}} & $d_{2.1}$ & Topological Metadata Enrichment & Automatic injection of K8s resource attributes (\texttt{k8s.pod.uid}, \texttt{node}, \texttt{deployment}) across signals. & $\text{QCI}_{2.1} = \text{Enriched}_{\text{records}} / \text{Total} \ge 0.99$ \\
+ & $d_{2.2}$ & Cross-Pillar Context Coupling & Rate of structured logs containing valid W3C \texttt{trace\_id}/\texttt{span\_id} and metrics exposing Exemplars. & $\text{QCI}_{2.2} = \min(\rho_{\text{log-trace}}, \rho_{\text{exemplar}}) \ge 0.90$ \\
+ & $d_{2.3}$ & Causal Self-Time Isolation ($T_{\text{self}}$) & Capability to decompose inclusive span duration $D(s_i)$ into exclusive execution $T_{\text{self}}(s_i)$. & $\text{QCI}_{2.3} \in \{0, 0.5, 1.0\}$ (L4 $= 1.0$) \\
+\midrule
+\multirow{3}{*}{\textbf{$D_3$}} & $d_{3.1}$ & Automated Anomaly DetectionLatency & Mean/median time to detect steady-state deviation ($MTTD$) without manual CLI polling. & $\text{QCI}_{3.1}: MTTD \le 15.0\,\text{s}$ \\
+ & $d_{3.2}$ & Root-Cause Localization ($MTTDiag, Acc$) & Automated multi-pillar fault localization accuracy ($Acc$) and diagnostic latency ($MTTDiag$). & $\text{QCI}_{3.2}: Acc \ge 80\%, MTTDiag \le 30\,\text{s}$ \\
+ & $d_{3.3}$ & Cascading Bias Immunity \& Explainability & Resistance to upstream cascading span misattribution ($1 - \text{FPR}_{\text{cascade}}$) and auditability of RCA path. & $\text{QCI}_{3.3}: \text{FPR}_{\text{cascade}} \le 0.15$ \\
+\midrule
+\multirow{3}{*}{\textbf{$D_4$}} & $d_{4.1}$ & SLI/SLO \& Error Budget Governance & Percentage of critical user journeys governed by multi-window burn-rate SLOs. & $\text{QCI}_{4.1} = |\text{Services}_{\text{SLO}}| / |\mathcal{V}_{\text{crit}}| \ge 0.90$ \\
+ & $d_{4.2}$ & Active Chaos Engineering Verification & Continuous execution of declarative fault injection with automated PromQL/HTTP steady-state probes. & $\text{QCI}_{4.2}: \text{ChaosProbes}_{\text{active}} \ge 1.0$ \\
+ & $d_{4.3}$ & Closed-Loop Remediation Readiness & Integration of observability alerts/RCA with automated rollback, scaling, or traffic shifting gates. & $\text{QCI}_{4.3} \in [0, 1]$ (L5 $\ge 0.90$) \\
+\midrule
+\multirow{3}{*}{\textbf{$D_5$}} & $d_{5.1}$ & CPU \& Memory Probe-Effect Budget & Marginal steady-state resource overhead ($\Delta_{\text{CPU}}, \Delta_{\text{RAM}}$) imposed by collectors and SDKs. & $\text{QCI}_{5.1}: \Delta_{\text{CPU}} < 15\%, \Delta_{\text{RAM}} < 15\%$ \\
+ & $d_{5.2}$ & Adaptive \& Tail-Based Sampling & Ratio of anomalous/high-latency traces retained vs.\ redundant baseline telemetry dropped. & $\text{QCI}_{5.2}: \text{Recall}_{\text{anomaly}} \ge 0.99$ \\
+ & $d_{5.3}$ & Index-Free Storage \& Cardinality Control & Storage amplification factor and resistance to high-cardinality label explosion (e.g., Loki/Tempo). & $\text{QCI}_{5.3}: \text{IndexRatio} \le 0.05$ \\
+\bottomrule
+\end{tabularx}
+\end{table*}
