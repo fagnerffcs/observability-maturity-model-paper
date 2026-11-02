@@ -263,70 +263,79 @@ def plot_omm_pareto_frontier():
         "legend.fontsize": 8,
     })
 
-    regimes = ["Level 2\n(Native CLI)", "Level 3 Attempt\n(Siloed Tracing)", "Level 4\n(L4 Correlated)"]
+    regimes = ["Level 2\n(Native CLI)", "Level 3\n(Siloed Tracing)", "Level 4\n(Correlated)"]
     x = np.arange(len(regimes))
 
     acc_vals = [20.0, 0.0, 83.33]
     mttdiag_med = [300.0, 39.15, 17.27]
     cpu_ovh = [1.12, 5.40, 9.51]
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(6.4, 2.75))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(7.6, 2.85))
 
     # Panel A: Diagnostic Accuracy (%) vs Cascading Bias Collapse
-    bars1 = ax1.bar(x, acc_vals, width=0.52, color=["#d95f02", "#e7298a", "#1b9e77"], edgecolor="black", linewidth=0.7)
-    ax1.axhline(80.0, color="#1b9e77", linestyle="--", linewidth=1.0, label="CN-OMM L4 Target (>= 80%)")
-    ax1.set_ylabel("Root-Cause Accuracy $Acc$ (%)")
+    bars1 = ax1.bar(x, acc_vals, width=0.48, color=["#d95f02", "#e7298a", "#1b9e77"], edgecolor="black", linewidth=0.7)
+    ax1.axhline(80.0, color="#1b9e77", linestyle="--", linewidth=1.1, label=r"Target Acc ($\geq 80\%$)")
+    ax1.set_ylabel(r"Root-Cause Accuracy $Acc$ (%)", fontweight="bold", labelpad=4)
     ax1.set_xticks(x)
     ax1.set_xticklabels(regimes)
-    ax1.set_ylim(0, 102)
+    ax1.set_ylim(0, 108)
     ax1.grid(axis="y", linestyle=":", alpha=0.6)
+    ax1.set_title(r"\textbf{(a)} Diagnostic Accuracy & Failure Mode", fontsize=9, fontweight="bold", pad=8)
 
     for bar, val in zip(bars1, acc_vals):
+        y_pos = val + 3.0 if val > 0 else 2.5
         ax1.text(
             bar.get_x() + bar.get_width() / 2.0,
-            val + 3.0,
+            y_pos,
             f"{val:.1f}%",
             ha="center",
             va="bottom",
-            fontsize=8,
+            fontsize=8.5,
             fontweight="bold",
         )
 
     ax1.annotate(
         "Cascading Span\nBias (0/30)",
-        xy=(1, 2.0),
-        xytext=(1, 36.0),
-        arrowprops=dict(arrowstyle="->", color="#b01060", lw=1.1),
+        xy=(1, 1.5),
+        xytext=(1, 38.0),
+        arrowprops=dict(arrowstyle="->", color="#b01060", lw=1.2),
         ha="center",
-        fontsize=7.5,
+        fontsize=7.8,
         fontweight="bold",
         color="#b01060",
+        bbox=dict(boxstyle="square,pad=0.25", facecolor="white", edgecolor="#e7298a", alpha=0.9, lw=0.6),
     )
-    ax1.legend(loc="upper left", frameon=True)
+    ax1.legend(loc="upper left", frameon=True, framealpha=0.92, fontsize=7.8)
 
     # Panel B: Median MTTDiag (s) and CPU Probe Effect (%)
     ax2_twin = ax2.twinx()
-    line1 = ax2.plot(x, mttdiag_med, color="#2b5c8f", marker="o", linewidth=1.8, markersize=6, label="Median $MTTDiag$ (s)")
+    line1 = ax2.plot(x, mttdiag_med, color="#2b5c8f", marker="o", linewidth=2.0, markersize=6, label=r"Median $MTTDiag$ (s)")
     line2 = ax2_twin.plot(x, cpu_ovh, color="#d95f02", marker="s", linestyle="--", linewidth=1.8, markersize=5.5, label=r"Steady-State $\Delta_{\mathrm{CPU}}$ (%)")
-    ax2_twin.axhline(15.0, color="#d95f02", linestyle=":", linewidth=1.0, label="Max Probe Budget (15%)")
+    line3 = ax2_twin.axhline(15.0, color="#d95f02", linestyle=":", linewidth=1.1, label=r"Max Probe Budget (15%)")
 
     for xi, yi in zip(x, mttdiag_med):
-        offset = -28 if xi == 0 else 18
-        ax2.annotate(f"{yi:.1f}s", (xi, yi), textcoords="offset points", xytext=(0, 8 if xi > 0 else -14), ha="center", fontsize=7.5, color="#2b5c8f", fontweight="bold")
+        if xi == 0:
+            ax2.annotate(f"{yi:.1f}s", (xi, yi), textcoords="offset points", xytext=(12, -4), ha="left", fontsize=8, color="#2b5c8f", fontweight="bold")
+        else:
+            ax2.annotate(f"{yi:.1f}s", (xi, yi), textcoords="offset points", xytext=(0, 7), ha="center", fontsize=8, color="#2b5c8f", fontweight="bold")
 
-    ax2.set_ylabel("Median $MTTDiag$ (s)", color="#2b5c8f")
-    ax2_twin.set_ylabel("CPU Probe Overhead $\Delta_{\mathrm{CPU}}$ (%)", color="#d95f02")
+    for xi, yi in zip(x, cpu_ovh):
+        ax2_twin.annotate(f"{yi:.1f}%", (xi, yi), textcoords="offset points", xytext=(0, -13), ha="center", fontsize=7.5, color="#d95f02", fontweight="bold")
+
+    ax2.set_ylabel(r"Median $MTTDiag$ (s)", color="#2b5c8f", fontweight="bold", labelpad=4)
+    ax2_twin.set_ylabel(r"CPU Probe Overhead $\Delta_{\mathrm{CPU}}$ (%)", color="#d95f02", fontweight="bold", labelpad=4)
     ax2.set_xticks(x)
     ax2.set_xticklabels(regimes)
-    ax2.set_ylim(0, 340)
-    ax2_twin.set_ylim(0, 20)
+    ax2.set_ylim(0, 360)
+    ax2_twin.set_ylim(0, 24)
     ax2.grid(axis="y", linestyle=":", alpha=0.6)
+    ax2.set_title(r"\textbf{(b)} Diagnostic Latency vs. Probe Overhead", fontsize=9, fontweight="bold", pad=8)
 
-    lines = line1 + line2
+    lines = line1 + line2 + [line3]
     labels = [l.get_label() for l in lines]
-    ax2.legend(lines, labels, loc="upper right", frameon=True, fontsize=7.2)
+    ax2.legend(lines, labels, loc="upper right", bbox_to_anchor=(0.98, 0.96), frameon=True, framealpha=0.92, fontsize=7.5)
 
-    plt.tight_layout()
+    plt.subplots_adjust(wspace=0.38, bottom=0.18, top=0.88, left=0.08, right=0.92)
     out_path = FIG_DIR / "fig_omm_pareto_frontier.png"
     fig.savefig(out_path, dpi=300, bbox_inches="tight")
     plt.close(fig)
