@@ -1,7 +1,7 @@
 \section{Automated Maturity Assessment Protocol}
 \label{sec:assessment}
 
-A persistent weakness in maturity model engineering is the reliance on manual, subjective Likert-scale questionnaires that suffer from respondent bias, high assessment labor costs, and rapid obsolescence in dynamic cloud environments \cite{proenca_2016, proenca_2016_rcis}. To address Research Question \textbf{RQ2}, this section formalizes an objective, programmatic maturity assessment protocol for the CN-OMM. Grounded in ISO/IEC 33001 process capability concepts \cite{iso_33001} and Lasrado et al.'s geometric distance metrics \cite{lasrado_2015}, our protocol translates the 15 sub-components of Table~\ref{tab:cn_omm_dimensions} into automated cluster audit queries and a non-compensatory mathematical scoring function.
+A persistent weakness in maturity model engineering is the reliance on manual, subjective Likert-scale questionnaires that suffer from respondent bias, high assessment labor costs, and rapid obsolescence in dynamic cloud environments~\cite{proenca_2016, proenca_2016_rcis}. To address Research Question \textbf{RQ2}, this section formalizes an objective, programmatic maturity assessment protocol for the CN-OMM. Grounded in ISO/IEC 33001 process capability concepts~\cite{iso_33001} and Lasrado et al.'s geometric distance metrics~\cite{lasrado_2015}, our protocol translates the 15 sub-components of Table~\ref{tab:cn_omm_dimensions} into automated cluster audit queries and a non-compensatory mathematical scoring function.
 
 \subsection{Declarative Cluster Auditing via Quantitative Capability Indicators}
 \label{subsec:declarative_qci}
@@ -24,14 +24,14 @@ Given the capability scores $c_{k.j} \in [1.0, 5.0]$ across the three sub-compon
 \end{equation}
 yielding the five-dimensional capability profile vector $\mathbf{c}(\mathcal{S}) = [C(D_1), C(D_2), C(D_3), C(D_4), C(D_5)]^\top \in [1, 5]^5$.
 
-In naive maturity models, the overall maturity level is calculated as the compensatory arithmetic mean $\bar{C} = \frac{1}{5}\sum_{k=1}^5 C(D_k)$. However, as established by configurational theory \cite{fiss_2011, lasrado_2015} and De Bruin et al.'s stage-gate principle \cite{debruin_2005}, an arithmetic mean masks catastrophic architectural bottlenecks: a cluster with high telemetry ingestion ($C(D_1) = 4.0$) but zero cross-pillar correlation ($C(D_2) = 2.0$) or runaway $30\%$ CPU overhead ($C(D_5) = 1.5$) cannot operate at Level 3 or Level 4 reliability. Therefore, CN-OMM defines the \textbf{Effective Stage-Gate Maturity Level} $\text{Level}_{\text{eff}}(\mathcal{S}) \in \{1, 2, 3, 4, 5\}$ using a strict non-compensatory minimum operator:
+In naive maturity models, the overall maturity level is calculated as the compensatory arithmetic mean $\bar{C} = \frac{1}{5}\sum_{k=1}^5 C(D_k)$. However, as established by configurational theory~\cite{fiss_2011, lasrado_2015} and De Bruin et al.'s stage-gate principle~\cite{debruin_2005}, an arithmetic mean masks catastrophic architectural bottlenecks: a cluster with high telemetry ingestion ($C(D_1) = 4.0$) but zero cross-pillar correlation ($C(D_2) = 2.0$) or runaway $30\%$ CPU overhead ($C(D_5) = 1.5$) cannot operate at Level 3 or Level 4 reliability. Therefore, CN-OMM defines the \textbf{Effective Stage-Gate Maturity Level} $\text{Level}_{\text{eff}}(\mathcal{S}) \in \{1, 2, 3, 4, 5\}$ using a strict non-compensatory minimum operator:
 \begin{equation}
     \text{Level}_{\text{eff}}(\mathcal{S}) = \min_{k \in \{1, \dots, 5\}} \left\lfloor C(D_k) \right\rfloor
     \label{eq:stage_gate_level}
 \end{equation}
 Under Equation~(\ref{eq:stage_gate_level}), a system achieves maturity stage $L \in \{1..5\}$ if and only if every orthogonal dimension satisfies the necessary stage-gate predicate $C(D_k) \ge L$.
 
-To provide granular visibility into continuous improvement between discrete stage-gates, we also formalize the normalized \textbf{Euclidean Maturity Progression Index} $\mathcal{I}(\mathcal{S}) \in [0, 1]$ relative to the ideal reference profile $\mathbf{c}^*(L_{\max}) = [5, 5, 5, 5, 5]^\top$ \cite{lasrado_2015}:
+To provide granular visibility into continuous improvement between discrete stage-gates, we also formalize the normalized \textbf{Euclidean Maturity Progression Index} $\mathcal{I}(\mathcal{S}) \in [0, 1]$ relative to the ideal reference profile $\mathbf{c}^*(L_{\max}) = [5, 5, 5, 5, 5]^\top$~\cite{lasrado_2015}:
 \begin{equation}
     \mathcal{I}(\mathcal{S}) = 1 - \frac{\left\| \mathbf{c}(\mathcal{S}) - \mathbf{c}^*(L_{\max}) \right\|_2}{\sqrt{5 \cdot (5 - 1)^2}} = 1 - \frac{\sqrt{\sum_{k=1}^{5} \left(5 - C(D_k)\right)^2}}{\sqrt{80}}
     \label{eq:euclidean_index}
