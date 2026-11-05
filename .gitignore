@@ -3,6 +3,7 @@ GEMINI.md
 AGENTS.md
 
 # Arquivos temporários e intermediários gerados pela compilação do LaTeX
+output/
 *.aux
 *.bbl
 *.blg
